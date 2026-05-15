@@ -1207,10 +1207,10 @@ footer strong{color:var(--azul)}
    CONFIGURAÇÃO — preencha antes de usar
 ═══════════════════════════════════════════════════ */
 const CFG = {
-  emailPublicKey:  'TADx_DbDjb19aFdHc',   // emailjs.com → Account → Public Key
-  emailServiceId:  'service_7wgvkgo',   // emailjs.com → Email Services → ID
-  emailTemplateId: 'template_i6zlqqt',   // emailjs.com → Email Templates → ID
-  emailRH:         'rhumanos@apabb.org.br',   // ex: 'rh@apabb.org.br'
+  emailPublicKey:  '',   // emailjs.com → Account → Public Key
+  emailServiceId:  '',   // emailjs.com → Email Services → ID
+  emailTemplateId: '',   // emailjs.com → Email Templates → ID
+  emailRH:         '',   // ex: 'rh@apabb.org.br'
 };
 
 /* ═══════════════════════════════════════════════════
@@ -1714,162 +1714,84 @@ async function baixarZip() {
    E-MAIL RICO PARA O RH — inclui imagens embedadas
 ═══════════════════════════════════════════════════ */
 
-/* Comprime imagem para base64 (max 900px, qualidade 0.72) */
-async function comprimirImagem(file) {
-  return new Promise((res, rej) => {
-    const reader = new FileReader();
-    reader.onload = e => {
-      const img = new Image();
-      img.onload = () => {
-        const MAX = 900;
-        let w = img.width, h = img.height;
-        if (w > MAX || h > MAX) {
-          if (w > h) { h = Math.round(h*MAX/w); w = MAX; }
-          else       { w = Math.round(w*MAX/h); h = MAX; }
-        }
-        const cv = document.createElement('canvas');
-        cv.width=w; cv.height=h;
-        cv.getContext('2d').drawImage(img,0,0,w,h);
-        res(cv.toDataURL('image/jpeg',0.72));
-      };
-      img.onerror = rej;
-      img.src = e.target.result;
-    };
-    reader.onerror = rej;
-    reader.readAsDataURL(file);
+/* ═══════════════════════════════════════════════════
+   CONFIGURAÇÃO
+═══════════════════════════════════════════════════ */
+// 1. URL do Google Apps Script (veja painel-rh-setup.txt)
+const APPS_SCRIPT_URL = '';
+
+// 2. EmailJS — alerta simples (sem html_body, evita limite 50KB)
+// Template no EmailJS deve ter apenas campos de texto simples:
+// Assunto: [APABB RH] Novo cadastro: {{nome_func}}
+// Corpo:   Nome: {{nome_func}}\nCargo: {{cargo}}\nCPF: {{cpf}}\nAdmissão: {{admissao}}\n\nAcesse o Painel RH para baixar os dados completos.
+
+/* Envia dados para Google Sheets via Apps Script */
+async function salvarNoSheets(d) {
+  if (!APPS_SCRIPT_URL) return { skipped: true };
+  const payload = {
+    data_envio:      new Date().toISOString(),
+    nome:            d.identificacao.nome,
+    cpf:             d.documentos.cpf,
+    rg:              d.documentos.rg,
+    data_nasc:       d.identificacao.data_nasc,
+    sexo:            d.identificacao.sexo,
+    estado_civil:    d.identificacao.estado_civil,
+    tipo_sang:       d.identificacao.tipo_sang,
+    mae:             d.identificacao.mae,
+    pai:             d.identificacao.pai,
+    local_trabalho:  d.identificacao.local_trabalho,
+    nucleo:          d.identificacao.nucleo,
+    escolaridade:    d.identificacao.escolaridade,
+    formacao:        d.identificacao.formacao,
+    email:           d.endereco.email,
+    celular:         d.endereco.celular,
+    cep:             d.endereco.cep,
+    cidade:          d.endereco.cidade + (d.endereco.uf ? ' / '+d.endereco.uf : ''),
+    bairro:          d.endereco.bairro,
+    logradouro:      d.endereco.rua + ', ' + d.endereco.numero,
+    pis:             d.documentos.pis,
+    ctps_num:        d.documentos.ctps_num,
+    titulo:          d.documentos.titulo,
+    reservista:      d.documentos.reservista,
+    cargo:           d.cargo.cargo,
+    admissao:        d.cargo.admissao,
+    salario:         d.cargo.salario,
+    horario:         d.cargo.horario,
+    banco:           d.bancario.banco,
+    agencia:         d.bancario.agencia,
+    conta:           d.bancario.conta,
+    dep_ir:          d.dependentes.qtd_ir,
+    dep_sf:          d.dependentes.qtd_sf,
+    dependentes:     d.dependentes.lista.map(x=>x.nome+'|'+x.nasc+'|'+x.par).join('; '),
+    recebe_vt:       d.vt.recebe === 'sim' ? 'Sim' : 'Não',
+    vt_valor:        d.vt.valor_dia,
+    recebe_sd:       d.sd.recebe === 'sim' ? 'Sim' : 'Não',
+    docs_anexados:   Object.keys(docs).length,
+    lista_docs:      Object.values(docs).map(x=>x.name+': '+x.file.name).join('; '),
+    responsavel:     d.meta.responsavel,
+  };
+  const res = await fetch(APPS_SCRIPT_URL, {
+    method: 'POST',
+    body: JSON.stringify(payload),
   });
+  return res.json();
 }
 
-const LABELS_EMAIL = {
-  'comp-res':'Comprovante de Residência','extrato':'Comp. Bancário',
-  'ctps':'CTPS Digital','rg-f':'RG — Frente','rg-v':'RG — Verso',
-  'cpf-doc':'CPF','pis-doc':'PIS/PASEP','titulo-doc':'Título de Eleitor',
-  'foto':'Foto 3×4','reservista':'Cert. Reservista','decl-vt':'Decl. Transporte',
-};
-
-async function buildEmailRH(d) {
-  const row = (l,v) => v && String(v).trim()
-    ? `<tr><td style="padding:5px 12px;font-weight:700;color:#4A6490;width:190px;font-size:12px">${l}</td>
-       <td style="padding:5px 12px;font-size:12px;color:#1A2B4A">${v}</td></tr>` : '';
-
-  const sec = (icon,title,rows) => rows
-    ? `<tr><td colspan="2" style="background:#1B3A8C;color:#fff;padding:7px 12px;font-weight:700;font-size:12px">${icon} ${title.toUpperCase()}</td></tr>${rows}`
-    : '';
-
-  const vt = d.vt.recebe==='sim'?'Sim':'Não';
-  const sd = d.sd.recebe==='sim'?'Sim':'Não';
-
-  // Processa docs: imagens → base64; PDFs → lista
-  let imgCards = '';
-  const pdfs = [];
-
-  for (const [id, doc] of Object.entries(docs)) {
-    const label = LABELS_EMAIL[id] || (id.startsWith('dep-doc-') ? 'Dep. '+id.replace('dep-doc-','') : id);
-    if (doc.file.type.startsWith('image/')) {
-      try {
-        const b64 = await comprimirImagem(doc.file);
-        imgCards += `<td style="padding:6px;vertical-align:top">
-          <div style="border:1px solid #C5D3EE;border-radius:8px;padding:6px 8px;display:inline-block;font-family:Arial">
-            <div style="font-size:10px;font-weight:700;color:#1B3A8C;margin-bottom:4px">${label}</div>
-            <img src="${b64}" style="max-width:145px;max-height:105px;display:block;border-radius:4px;object-fit:contain">
-          </div></td>`;
-      } catch { pdfs.push(label+' ('+doc.file.name+')'); }
-    } else { pdfs.push(label+' ('+doc.file.name+')'); }
-  }
-
-  const docsSection = `
-    <tr><td colspan="2" style="background:#1B3A8C;color:#fff;padding:7px 12px;font-weight:700;font-size:12px">📎 DOCUMENTOS ANEXADOS</td></tr>
-    ${imgCards ? `<tr><td colspan="2" style="padding:10px 12px"><table><tr>${imgCards}</tr></table></td></tr>` : ''}
-    ${pdfs.length ? `<tr><td colspan="2" style="padding:6px 12px 10px;font-size:11px;background:#FFF5F5;color:#C0392B;border-top:1px solid #f5c6c4">
-      📄 <strong>PDFs — coletar original em até 3 dias úteis:</strong> ${pdfs.join(' · ')}
-    </td></tr>` : ''}`;
-
-  const depRows = d.dependentes.lista.map(dep =>
-    row(`Dep. ${dep.n} (${dep.tipo})`, `${dep.nome} | ${dep.nasc} | ${dep.par}`)
-  ).join('');
-
-  return `<div style="font-family:Arial,sans-serif;max-width:680px;margin:0 auto;border:1px solid #C5D3EE;border-radius:12px;overflow:hidden">
-  <div style="background:#1B3A8C;padding:18px 22px;color:#fff">
-    <div style="font-size:16px;font-weight:800">📋 Novo Cadastro de Colaborador — APABB RH</div>
-    <div style="font-size:11px;color:rgba(255,255,255,.7);margin-top:3px">Recebido em ${new Date().toLocaleString('pt-BR')}</div>
-  </div>
-  <div style="padding:10px 18px;background:#F2F6FD;border-bottom:1px solid #C5D3EE;display:flex;align-items:center;gap:10px">
-    <span style="font-size:17px;font-weight:800;color:#1B3A8C">${d.identificacao.nome}</span>
-    <span style="background:#E8F0FB;border:1px solid #C5D3EE;border-radius:20px;padding:2px 10px;font-size:11px;color:#2E5BB8;font-weight:700">${d.cargo.cargo||'—'}</span>
-  </div>
-  <table style="width:100%;border-collapse:collapse;background:#fff">
-    ${sec('👤','Identificação',
-      row('Local de Trabalho', d.identificacao.local_trabalho) +
-      row('Nome Completo',     d.identificacao.nome) +
-      row('Data de Nascimento',d.identificacao.data_nasc) +
-      row('Local de Nascimento',d.identificacao.local_nasc) +
-      row('Sexo',              d.identificacao.sexo) +
-      row('Estado Civil',      d.identificacao.estado_civil) +
-      row('Tipo Sanguíneo',    d.identificacao.tipo_sang) +
-      row('Nome da Mãe',       d.identificacao.mae) +
-      row('Nome do Pai',       d.identificacao.pai) +
-      row('Cônjuge',           d.identificacao.conjuge)
-    )}
-    ${sec('📄','Documentos',
-      row('CPF',               d.documentos.cpf) +
-      row('RG',                d.documentos.rg) +
-      row('PIS / PASEP',       d.documentos.pis) +
-      row('CTPS — Número',     d.documentos.ctps_num) +
-      row('CTPS — Série / UF', d.documentos.ctps_serie + (d.documentos.ctps_uf?' / '+d.documentos.ctps_uf:'')) +
-      row('Título de Eleitor', d.documentos.titulo) +
-      row('Zona / Seção',      d.documentos.zona && d.documentos.secao ? d.documentos.zona+' / '+d.documentos.secao : '') +
-      row('Reservista',        d.documentos.reservista)
-    )}
-    ${sec('🏠','Endereço',
-      row('Logradouro', d.endereco.rua+', '+d.endereco.numero+(d.endereco.complemento?' '+d.endereco.complemento:'')) +
-      row('Bairro / Cidade', d.endereco.bairro+' — '+d.endereco.cidade+' / '+d.endereco.uf) +
-      row('CEP',     d.endereco.cep) +
-      row('Celular', d.endereco.celular) +
-      row('E-mail',  d.endereco.email)
-    )}
-    ${sec('💼','Cargo e Admissão',
-      row('Cargo',         d.cargo.cargo) +
-      row('Data Admissão', d.cargo.admissao) +
-      row('Salário Bruto', d.cargo.salario ? 'R$ '+d.cargo.salario : '') +
-      row('Horário',       d.cargo.horario)
-    )}
-    ${sec('🏦','Dados Bancários',
-      row('Banco',   d.bancario.banco) +
-      row('Agência', d.bancario.agencia) +
-      row('Conta',   d.bancario.conta)
-    )}
-    ${d.dependentes.lista.length > 0 ? sec('👨‍👩‍👧','Dependentes',
-      row('Qtd. IR', d.dependentes.qtd_ir) +
-      row('Qtd. SF', d.dependentes.qtd_sf) + depRows
-    ) : ''}
-    ${sec('🚌','Vale Transporte e Seguro',
-      row('Recebe VT',    vt) +
-      row('Valor Diário', d.vt.valor_dia ? 'R$ '+d.vt.valor_dia : '') +
-      row('Seguro Desemprego', sd) +
-      row('SD Vigência', d.sd.ate)
-    )}
-    ${docsSection}
-    <tr><td colspan="2" style="background:#FFF8E6;padding:8px 12px;font-size:11px;color:#8a5c00;border-top:1px solid #F5A800">
-      ⚠ Originais devem ser entregues em até <strong>3 dias úteis</strong>. · Responsável: ${d.meta.responsavel||'—'} · ${d.meta.local_data}
-    </td></tr>
-  </table>
-</div>`;
-}
-
-async function enviarEmail(d) {
+/* Alerta simples para o RH — só campos de texto, sem html_body */
+async function enviarAlertaRH(d) {
   if (!CFG.emailPublicKey || !CFG.emailServiceId) return;
-  try {
-    emailjs.init({publicKey: CFG.emailPublicKey});
-    const htmlBody = await buildEmailRH(d);
-    await emailjs.send(CFG.emailServiceId, CFG.emailTemplateId, {
-      to_email:   CFG.emailRH,
-      nome_func:  d.identificacao.nome,
-      cargo:      d.cargo.cargo,
-      html_body:  htmlBody,
-      data_envio: new Date().toLocaleString('pt-BR'),
-    });
-    console.log('E-mail enviado ao RH com sucesso.');
-  } catch(e) { console.warn('Email não enviado:', e.message); }
+  emailjs.init({publicKey: CFG.emailPublicKey});
+  await emailjs.send(CFG.emailServiceId, CFG.emailTemplateId, {
+    to_email:  CFG.emailRH,
+    nome_func: d.identificacao.nome,
+    cargo:     d.cargo.cargo,
+    cpf:       d.documentos.cpf,
+    admissao:  d.cargo.admissao,
+    celular:   d.endereco.celular,
+    email_func:d.endereco.email,
+    docs:      Object.keys(docs).length + ' arquivo(s)',
+    data_envio:new Date().toLocaleString('pt-BR'),
+  });
 }
 
 async function enviar() {
@@ -1892,7 +1814,22 @@ async function enviar() {
   btn.disabled=true; btn.textContent='⏳ Enviando...';
 
   const d = coletar();
-  await enviarEmail(d);
+
+  // 1. Salva no Google Sheets
+  try {
+    const r = await salvarNoSheets(d);
+    if (r && !r.skipped) toast('✓ Dados salvos com sucesso!','ok');
+  } catch(e) { console.warn('Sheets:', e.message); }
+
+  // 2. Envia alerta simples ao RH
+  try {
+    await enviarAlertaRH(d);
+    toast('✓ RH notificado por e-mail!','ok');
+  } catch(e) {
+    const msg = e.text || e.message || 'verifique o console';
+    toast('⚠ Alerta não enviado: ' + msg,'err');
+    console.error('EmailJS:', e);
+  }
 
   btn.disabled=false; btn.textContent='✓ Enviar Cadastro';
 
