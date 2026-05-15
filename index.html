@@ -769,55 +769,6 @@
   </div>
 </div>
 
-  <div id="success-screen" style="display:none;padding:2rem 1rem"><div style="max-width:860px;margin:0 auto"><div class="card">
-      <div class="card-body" style="padding:2rem 1.8rem">
-
-        <!-- topo: ícone + título -->
-        <div style="text-align:center;margin-bottom:1.8rem">
-          <div class="success-icon">✅</div>
-          <h2>Cadastro Concluído!</h2>
-          <p id="success-name">O RH foi notificado por e-mail. Baixe os dados abaixo.</p>
-        </div>
-
-        <!-- botões de download em destaque -->
-        <div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin-bottom:1.8rem">
-          <button class="btn-dl btn-dl-excel" onclick="exportExcel()" id="btn-excel">
-            <span style="font-size:1.5rem">📊</span>
-            <span>
-              <strong>Baixar Excel</strong>
-              <small>Todos os dados do cadastro</small>
-            </span>
-          </button>
-          <button class="btn-dl btn-dl-zip" onclick="downloadZip()" id="btn-zip">
-            <span style="font-size:1.5rem">📦</span>
-            <span>
-              <strong>Baixar Anexos (ZIP)</strong>
-              <small id="zip-count">Documentos enviados</small>
-            </span>
-          </button>
-        </div>
-
-        <!-- resumo -->
-        <div style="margin-bottom:1.2rem">
-          <div style="font-size:0.7rem;font-weight:800;text-transform:uppercase;letter-spacing:0.07em;color:var(--label);margin-bottom:0.6rem">Resumo</div>
-          <div class="summary-grid" id="summary-grid"></div>
-        </div>
-
-        <!-- docs anexados -->
-        <div id="doc-summary-wrap">
-          <div style="font-size:0.7rem;font-weight:800;text-transform:uppercase;letter-spacing:0.07em;color:var(--label);margin-bottom:0.6rem">Documentos Anexados</div>
-          <div class="doc-summary" id="doc-summary"></div>
-        </div>
-
-        <!-- ações secundárias -->
-        <div style="display:flex;gap:0.75rem;justify-content:center;flex-wrap:wrap;margin-top:1.5rem;padding-top:1.2rem;border-top:1px solid var(--azul-ll)">
-          <button class="print-btn" onclick="window.print()">🖨 Imprimir</button>
-          <button class="btn btn-primary" onclick="resetForm()">+ Novo Cadastro</button>
-        </div>
-
-      </div>
-    </div>
-  </div></div></div>
 
 <div id="form-wrapper" style="display:none">
 <div class="container">
@@ -1231,7 +1182,7 @@
             <div class="doc-icon">📋</div>
             <div class="doc-info">
               <div class="doc-name">PIS / PASEP</div>
-              <div class="doc-meta"><span class="doc-badge-req">Obrigatório</span><span class="doc-badge-ok">✓ Anexado</span><span style="color:var(--label)">Cartão PIS ou extrato CAIXA com número PIS</span></div>
+              <div class="doc-meta"><span class="doc-badge-req">Opcional</span><span class="doc-badge-ok">✓ Anexado</span><span style="color:var(--label)">Cartão PIS ou extrato CAIXA com número PIS (se disponível)</span></div>
               <div class="doc-filename" id="fn-pis-doc"></div>
             </div>
             <div class="doc-actions">
@@ -1443,6 +1394,58 @@
   <!-- ══ SUCESSO ══ -->
 
 
+
+  <!-- ══ SUCESSO ══ -->
+  <div id="success-screen">
+    <div class="card">
+      <div class="card-body" style="padding:2rem 1.8rem">
+
+        <!-- topo: ícone + título -->
+        <div style="text-align:center;margin-bottom:1.8rem">
+          <div class="success-icon">✅</div>
+          <h2>Cadastro Concluído!</h2>
+          <p id="success-name">O RH foi notificado por e-mail. Baixe os dados abaixo.</p>
+        </div>
+
+        <!-- botões de download em destaque -->
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin-bottom:1.8rem">
+          <button class="btn-dl btn-dl-excel" onclick="exportExcel()" id="btn-excel">
+            <span style="font-size:1.5rem">📊</span>
+            <span>
+              <strong>Baixar Excel</strong>
+              <small>Todos os dados do cadastro</small>
+            </span>
+          </button>
+          <button class="btn-dl btn-dl-zip" onclick="downloadZip()" id="btn-zip">
+            <span style="font-size:1.5rem">📦</span>
+            <span>
+              <strong>Baixar Anexos (ZIP)</strong>
+              <small id="zip-count">Documentos enviados</small>
+            </span>
+          </button>
+        </div>
+
+        <!-- resumo -->
+        <div style="margin-bottom:1.2rem">
+          <div style="font-size:0.7rem;font-weight:800;text-transform:uppercase;letter-spacing:0.07em;color:var(--label);margin-bottom:0.6rem">Resumo</div>
+          <div class="summary-grid" id="summary-grid"></div>
+        </div>
+
+        <!-- docs anexados -->
+        <div id="doc-summary-wrap">
+          <div style="font-size:0.7rem;font-weight:800;text-transform:uppercase;letter-spacing:0.07em;color:var(--label);margin-bottom:0.6rem">Documentos Anexados</div>
+          <div class="doc-summary" id="doc-summary"></div>
+        </div>
+
+        <!-- ações secundárias -->
+        <div style="display:flex;gap:0.75rem;justify-content:center;flex-wrap:wrap;margin-top:1.5rem;padding-top:1.2rem;border-top:1px solid var(--azul-ll)">
+          <button class="print-btn" onclick="window.print()">🖨 Imprimir</button>
+          <button class="btn btn-primary" onclick="resetForm()">+ Novo Cadastro</button>
+        </div>
+
+      </div>
+    </div>
+  </div>
 </div><!-- /container -->
 </div><!-- /form-wrapper -->
 
@@ -2168,7 +2171,7 @@ async function submitForm() {
   // Garante que tela de sucesso aparece
   const ss = document.getElementById('success-screen');
   ss.style.display = 'block';
-  document.getElementById('form-wrapper').style.display = 'none';
+  // NÃO ocultar form-wrapper — success-screen está dentro dele
   window.scrollTo({ top: 0, behavior: 'smooth' });
 }
 
@@ -2210,12 +2213,12 @@ function resetForm() {
 
   // Volta para tela inicial
   document.getElementById('success-screen').style.display = 'none';
+  document.getElementById('progress-wrap').style.display = '';
   document.getElementById('form-wrapper').style.display = 'none';
   document.getElementById('intro-screen').style.display = 'flex';
-
   completedSteps.clear();
   currentStep = 1;
-  // Não chama go(1) pois form-wrapper está oculto — será chamado ao iniciar
+  renderProgress();
 }
 
 /* ══════════════════════════════════════
@@ -2223,7 +2226,15 @@ function resetForm() {
 ══════════════════════════════════════ */
 function iniciarCadastro() {
   document.getElementById('intro-screen').style.display = 'none';
+  document.getElementById('success-screen').style.display = 'none';
+  document.getElementById('progress-wrap').style.display = '';
   document.getElementById('form-wrapper').style.display = 'block';
+  // Garante sec1 ativa
+  document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+  document.getElementById('sec1').classList.add('active');
+  currentStep = 1;
+  completedSteps.clear();
+  renderProgress();
   window.scrollTo({ top: 0, behavior: 'smooth' });
 }
 
