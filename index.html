@@ -727,6 +727,99 @@
   <div class="header-badge">Cód. 04-05-04-42</div>
 </header>
 
+<div id="intro-screen" style="min-height:calc(100vh - 80px);display:flex;align-items:center;justify-content:center;padding:2rem 1rem">
+  <div style="max-width:640px;width:100%">
+    <div style="background:#fff;border-radius:20px;overflow:hidden;box-shadow:0 4px 24px rgba(27,58,140,0.10)">
+      <!-- hero -->
+      <div style="background:linear-gradient(135deg,#1B3A8C 0%,#2E5BB8 100%);padding:2.5rem 2.2rem;text-align:center;color:#fff">
+        <div style="font-size:2.4rem;margin-bottom:0.8rem">👋</div>
+        <h2 style="font-size:1.5rem;font-weight:800;margin:0 0 0.4rem">Bem-vindo ao Portal de Cadastro</h2>
+        <p style="font-size:0.9rem;color:rgba(255,255,255,.75);margin:0">APABB — Associação de Pais, Amigos e Pessoas com Deficiência do Banco do Brasil</p>
+      </div>
+      <!-- body -->
+      <div style="padding:2rem 2.2rem">
+        <p style="font-size:0.95rem;color:#1A2B4A;font-weight:600;margin:0 0 1.2rem">Este formulário é a <strong>primeira etapa do seu cadastro como novo colaborador</strong>. Separe os documentos abaixo antes de começar — o preenchimento leva em média <strong>10 minutos</strong>.</p>
+
+        <div style="background:#F2F6FD;border-radius:12px;padding:1.2rem 1.4rem;margin-bottom:1.4rem">
+          <div style="font-size:0.72rem;font-weight:800;text-transform:uppercase;letter-spacing:.07em;color:#4A6490;margin-bottom:0.8rem">📋 Documentos necessários</div>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:0.5rem 1rem">
+            <div style="font-size:0.82rem;color:#1A2B4A;display:flex;gap:6px;align-items:flex-start"><span style="color:#1A7A4A;flex-shrink:0">✓</span>RG (frente e verso)</div>
+            <div style="font-size:0.82rem;color:#1A2B4A;display:flex;gap:6px;align-items:flex-start"><span style="color:#1A7A4A;flex-shrink:0">✓</span>CPF</div>
+            <div style="font-size:0.82rem;color:#1A2B4A;display:flex;gap:6px;align-items:flex-start"><span style="color:#1A7A4A;flex-shrink:0">✓</span>CTPS Digital (arquivo)</div>
+            <div style="font-size:0.82rem;color:#1A2B4A;display:flex;gap:6px;align-items:flex-start"><span style="color:#1A7A4A;flex-shrink:0">✓</span>PIS / PASEP</div>
+            <div style="font-size:0.82rem;color:#1A2B4A;display:flex;gap:6px;align-items:flex-start"><span style="color:#1A7A4A;flex-shrink:0">✓</span>Comprovante de residência</div>
+            <div style="font-size:0.82rem;color:#1A2B4A;display:flex;gap:6px;align-items:flex-start"><span style="color:#1A7A4A;flex-shrink:0">✓</span>Foto 3×4 recente</div>
+            <div style="font-size:0.82rem;color:#1A2B4A;display:flex;gap:6px;align-items:flex-start"><span style="color:#1A7A4A;flex-shrink:0">✓</span>Dados bancários (conta corrente)</div>
+            <div style="font-size:0.82rem;color:#4A6490;display:flex;gap:6px;align-items:flex-start"><span style="flex-shrink:0">◦</span>Reservista (homens)</div>
+            <div style="font-size:0.82rem;color:#4A6490;display:flex;gap:6px;align-items:flex-start"><span style="flex-shrink:0">◦</span>Título de eleitor</div>
+            <div style="font-size:0.82rem;color:#4A6490;display:flex;gap:6px;align-items:flex-start"><span style="flex-shrink:0">◦</span>Doc. dependentes (se houver)</div>
+          </div>
+        </div>
+
+        <div style="background:#FFF8E6;border-left:3px solid #F5A800;border-radius:0 10px 10px 0;padding:0.75rem 1rem;font-size:0.82rem;color:#8a5c00;margin-bottom:1.6rem;line-height:1.5">
+          ⚠ Os <strong>originais</strong> devem ser entregues ao RH em até <strong>3 dias úteis</strong> após o envio deste formulário.
+        </div>
+
+        <button onclick="iniciarCadastro()" style="width:100%;padding:1rem;background:#1B3A8C;color:#fff;border:none;border-radius:12px;font-family:'Nunito',sans-serif;font-size:1rem;font-weight:800;cursor:pointer;letter-spacing:.02em;transition:all .2s" onmouseover="this.style.background='#2E5BB8'" onmouseout="this.style.background='#1B3A8C'">
+          Iniciar meu Cadastro →
+        </button>
+      </div>
+    </div>
+    <p style="text-align:center;font-size:0.72rem;color:#4A6490;margin-top:1.2rem">APABB · Departamento de RH · Novos Colaboradores CLT</p>
+  </div>
+</div>
+
+  <div id="success-screen" style="display:none;padding:2rem 1rem"><div style="max-width:860px;margin:0 auto"><div class="card">
+      <div class="card-body" style="padding:2rem 1.8rem">
+
+        <!-- topo: ícone + título -->
+        <div style="text-align:center;margin-bottom:1.8rem">
+          <div class="success-icon">✅</div>
+          <h2>Cadastro Concluído!</h2>
+          <p id="success-name">O RH foi notificado por e-mail. Baixe os dados abaixo.</p>
+        </div>
+
+        <!-- botões de download em destaque -->
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin-bottom:1.8rem">
+          <button class="btn-dl btn-dl-excel" onclick="exportExcel()" id="btn-excel">
+            <span style="font-size:1.5rem">📊</span>
+            <span>
+              <strong>Baixar Excel</strong>
+              <small>Todos os dados do cadastro</small>
+            </span>
+          </button>
+          <button class="btn-dl btn-dl-zip" onclick="downloadZip()" id="btn-zip">
+            <span style="font-size:1.5rem">📦</span>
+            <span>
+              <strong>Baixar Anexos (ZIP)</strong>
+              <small id="zip-count">Documentos enviados</small>
+            </span>
+          </button>
+        </div>
+
+        <!-- resumo -->
+        <div style="margin-bottom:1.2rem">
+          <div style="font-size:0.7rem;font-weight:800;text-transform:uppercase;letter-spacing:0.07em;color:var(--label);margin-bottom:0.6rem">Resumo</div>
+          <div class="summary-grid" id="summary-grid"></div>
+        </div>
+
+        <!-- docs anexados -->
+        <div id="doc-summary-wrap">
+          <div style="font-size:0.7rem;font-weight:800;text-transform:uppercase;letter-spacing:0.07em;color:var(--label);margin-bottom:0.6rem">Documentos Anexados</div>
+          <div class="doc-summary" id="doc-summary"></div>
+        </div>
+
+        <!-- ações secundárias -->
+        <div style="display:flex;gap:0.75rem;justify-content:center;flex-wrap:wrap;margin-top:1.5rem;padding-top:1.2rem;border-top:1px solid var(--azul-ll)">
+          <button class="print-btn" onclick="window.print()">🖨 Imprimir</button>
+          <button class="btn btn-primary" onclick="resetForm()">+ Novo Cadastro</button>
+        </div>
+
+      </div>
+    </div>
+  </div></div></div>
+
+<div id="form-wrapper" style="display:none">
 <div class="container">
 
   <!-- PROGRESSO VISUAL -->
@@ -929,10 +1022,17 @@
       </div>
       <div class="card-body">
         <div class="grid g2">
-          <div class="field"><label>Dependentes do Imposto de Renda (qtd.)</label><input type="number" id="dep_ir" min="0" max="20" placeholder="0" value="0"></div>
-          <div class="field"><label>Dependentes Salário Família (filhos &lt; 14 anos)</label><input type="number" id="dep_sf" min="0" max="20" placeholder="0" value="0"></div>
+          <div class="field">
+            <label>Dependentes do Imposto de Renda (qtd.)</label>
+            <input type="number" id="dep_ir" min="0" max="20" placeholder="0" value="0" oninput="atualizarDependentes()">
+          </div>
+          <div class="field">
+            <label>Dependentes Salário Família (filhos &lt; 14 anos)</label>
+            <input type="number" id="dep_sf" min="0" max="20" placeholder="0" value="0" oninput="atualizarDependentes()">
+          </div>
         </div>
-        <div class="info-box">Para cada dependente declarado no IR, é necessário entregar documentação comprobatória ao RH da APABB.</div>
+        <div class="info-box">Para cada dependente, preencha os dados abaixo e anexe o documento comprobatório (certidão de nascimento, certidão de casamento etc.).</div>
+        <div id="lista-dependentes"></div>
       </div>
       <div class="nav-row">
         <button class="btn btn-outline" onclick="go(2)">← Voltar</button>
@@ -1042,9 +1142,8 @@
             <span class="field-error">⚠ Campo obrigatório</span>
           </div>
           <div class="field">
-            <label>PIS / PASEP <span class="req">*</span></label>
-            <input type="text" id="pis" placeholder="000.00000.00-0" data-required="true">
-            <span class="field-error">⚠ Campo obrigatório</span>
+            <label>PIS / PASEP</label>
+            <input type="text" id="pis" placeholder="000.00000.00-0">
           </div>
         </div>
         <div class="grid g3">
@@ -1072,31 +1171,17 @@
         <div class="doc-section-title">📎 Anexos obrigatórios</div>
         <div class="doc-list">
 
-          <div class="doc-row" id="dr-ctps-f">
+          <div class="doc-row" id="dr-ctps-digital">
             <div class="doc-icon">📗</div>
             <div class="doc-info">
-              <div class="doc-name">CTPS — Frente</div>
-              <div class="doc-meta"><span class="doc-badge-req">Obrigatório</span><span class="doc-badge-ok">✓ Anexado</span><span style="color:var(--label)">Página com foto e dados pessoais</span></div>
-              <div class="doc-filename" id="fn-ctps-f"></div>
+              <div class="doc-name">CTPS Digital</div>
+              <div class="doc-meta"><span class="doc-badge-req">Obrigatório</span><span class="doc-badge-ok">✓ Anexado</span><span style="color:var(--label)">Arquivo PDF ou imagem da CTPS Digital (app Carteira de Trabalho)</span></div>
+              <div class="doc-filename" id="fn-ctps-digital"></div>
             </div>
             <div class="doc-actions">
-              <label class="btn-doc-upload">📎 Anexar<input type="file" accept=".pdf,.jpg,.jpeg,.png" onchange="handleUpload(this,'ctps-f','CTPS — Frente')"></label>
-              <button class="btn-doc-view" onclick="previewDoc('ctps-f')">👁 Visualizar</button>
-              <button class="btn-doc-del" onclick="removeDoc('ctps-f')" title="Remover">🗑</button>
-            </div>
-          </div>
-
-          <div class="doc-row" id="dr-ctps-v">
-            <div class="doc-icon">📗</div>
-            <div class="doc-info">
-              <div class="doc-name">CTPS — Verso / Última Anotação</div>
-              <div class="doc-meta"><span class="doc-badge-req">Obrigatório</span><span class="doc-badge-ok">✓ Anexado</span><span style="color:var(--label)">Página do último vínculo empregatício</span></div>
-              <div class="doc-filename" id="fn-ctps-v"></div>
-            </div>
-            <div class="doc-actions">
-              <label class="btn-doc-upload">📎 Anexar<input type="file" accept=".pdf,.jpg,.jpeg,.png" onchange="handleUpload(this,'ctps-v','CTPS — Verso')"></label>
-              <button class="btn-doc-view" onclick="previewDoc('ctps-v')">👁 Visualizar</button>
-              <button class="btn-doc-del" onclick="removeDoc('ctps-v')" title="Remover">🗑</button>
+              <label class="btn-doc-upload">📎 Anexar<input type="file" accept=".pdf,.jpg,.jpeg,.png" onchange="handleUpload(this,'ctps-digital','CTPS Digital')"></label>
+              <button class="btn-doc-view" onclick="previewDoc('ctps-digital')">👁 Visualizar</button>
+              <button class="btn-doc-del" onclick="removeDoc('ctps-digital')" title="Remover">🗑</button>
             </div>
           </div>
 
@@ -1192,7 +1277,7 @@
             <div class="doc-icon">📷</div>
             <div class="doc-info">
               <div class="doc-name">Foto 3×4</div>
-              <div class="doc-meta"><span class="doc-badge-req">Recomendado</span><span class="doc-badge-ok">✓ Anexado</span><span style="color:var(--label)">Foto recente, fundo branco, sem acessórios</span></div>
+              <div class="doc-meta"><span class="doc-badge-req">Obrigatório</span><span class="doc-badge-ok">✓ Anexado</span><span style="color:var(--label)">Foto recente, fundo branco, sem acessórios</span></div>
               <div class="doc-filename" id="fn-foto3x4"></div>
             </div>
             <div class="doc-actions">
@@ -1356,58 +1441,10 @@
   </div>
 
   <!-- ══ SUCESSO ══ -->
-  <div id="success-screen">
-    <div class="card">
-      <div class="card-body" style="padding:2rem 1.8rem">
 
-        <!-- topo: ícone + título -->
-        <div style="text-align:center;margin-bottom:1.8rem">
-          <div class="success-icon">✅</div>
-          <h2>Cadastro Concluído!</h2>
-          <p id="success-name">O RH foi notificado por e-mail. Baixe os dados abaixo.</p>
-        </div>
-
-        <!-- botões de download em destaque -->
-        <div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin-bottom:1.8rem">
-          <button class="btn-dl btn-dl-excel" onclick="exportExcel()" id="btn-excel">
-            <span style="font-size:1.5rem">📊</span>
-            <span>
-              <strong>Baixar Excel</strong>
-              <small>Todos os dados do cadastro</small>
-            </span>
-          </button>
-          <button class="btn-dl btn-dl-zip" onclick="downloadZip()" id="btn-zip">
-            <span style="font-size:1.5rem">📦</span>
-            <span>
-              <strong>Baixar Anexos (ZIP)</strong>
-              <small id="zip-count">Documentos enviados</small>
-            </span>
-          </button>
-        </div>
-
-        <!-- resumo -->
-        <div style="margin-bottom:1.2rem">
-          <div style="font-size:0.7rem;font-weight:800;text-transform:uppercase;letter-spacing:0.07em;color:var(--label);margin-bottom:0.6rem">Resumo</div>
-          <div class="summary-grid" id="summary-grid"></div>
-        </div>
-
-        <!-- docs anexados -->
-        <div id="doc-summary-wrap">
-          <div style="font-size:0.7rem;font-weight:800;text-transform:uppercase;letter-spacing:0.07em;color:var(--label);margin-bottom:0.6rem">Documentos Anexados</div>
-          <div class="doc-summary" id="doc-summary"></div>
-        </div>
-
-        <!-- ações secundárias -->
-        <div style="display:flex;gap:0.75rem;justify-content:center;flex-wrap:wrap;margin-top:1.5rem;padding-top:1.2rem;border-top:1px solid var(--azul-ll)">
-          <button class="print-btn" onclick="window.print()">🖨 Imprimir</button>
-          <button class="btn btn-primary" onclick="resetForm()">+ Novo Cadastro</button>
-        </div>
-
-      </div>
-    </div>
-  </div>
 
 </div><!-- /container -->
+</div><!-- /form-wrapper -->
 
 <!-- MODAL PREVIEW -->
 <div id="preview-modal">
@@ -1748,6 +1785,7 @@ function collectFormData() {
     dependentes: {
       qtd_imposto_renda: g('dep_ir'),
       qtd_salario_familia: g('dep_sf'),
+      lista: coletarDependentes(),
     },
     dados_bancarios: {
       banco: g('banco'),
@@ -1857,6 +1895,11 @@ function exportExcel() {
       ['CTPS — Número',          d.documentos.ctps_numero],
       ['CTPS — Série',           d.documentos.ctps_serie],
       ['CTPS — UF',              d.documentos.ctps_estado_emissao],
+      [],
+      ['DEPENDENTES'],
+      ['Qtd. Dep. IR', d.dependentes.qtd_imposto_renda],
+      ['Qtd. Dep. SF', d.dependentes.qtd_salario_familia],
+      ...d.dependentes.lista.map(dep => ['  Dep. ' + dep.numero + ' — ' + dep.tipo, dep.nome + (dep.nascimento ? ' | ' + dep.nascimento : '') + (dep.parentesco ? ' | ' + dep.parentesco : '')]),
       ['Título de Eleitor',      d.documentos.titulo_eleitor],
       ['Zona Eleitoral',         d.documentos.zona_eleitoral],
       ['Seção Eleitoral',        d.documentos.secao_eleitoral],
@@ -1941,8 +1984,7 @@ async function downloadZip() {
     const docLabels = {
       'comp-res':  '01_comprovante_residencia',
       'extrato':   '02_comprovante_bancario',
-      'ctps-f':    '03_ctps_frente',
-      'ctps-v':    '04_ctps_verso',
+      'ctps-digital': '03_ctps_digital',
       'rg-f':      '05_rg_frente',
       'rg-v':      '06_rg_verso',
       'cpf-doc':   '07_cpf',
@@ -2105,7 +2147,7 @@ async function submitForm() {
   // Docs anexados
   const docSummary = document.getElementById('doc-summary');
   docSummary.innerHTML = '';
-  const docLabels = { 'comp-res': 'Comp. Residência', 'extrato': 'Comp. Bancário', 'ctps-f': 'CTPS Frente', 'ctps-v': 'CTPS Verso', 'rg-f': 'RG Frente', 'rg-v': 'RG Verso', 'cpf-doc': 'CPF', 'pis-doc': 'PIS', 'titulo-doc': 'Título', 'foto3x4': 'Foto 3×4', 'decl-vt': 'Decl. Transporte', 'reservista': 'Reservista' };
+  const docLabels = { 'comp-res': 'Comp. Residência', 'extrato': 'Comp. Bancário', 'ctps-digital': 'CTPS Digital', 'rg-f': 'RG Frente', 'rg-v': 'RG Verso', 'cpf-doc': 'CPF', 'pis-doc': 'PIS', 'titulo-doc': 'Título', 'foto3x4': 'Foto 3×4', 'decl-vt': 'Decl. Transporte', 'reservista': 'Reservista' };
   let docCount = 0;
   for (const [id, label] of Object.entries(docLabels)) {
     if (uploadedDocs[id]) {
@@ -2122,8 +2164,11 @@ async function submitForm() {
   const btnZip = document.getElementById('btn-zip');
   if (btnZip) btnZip.disabled = docCount === 0;
 
-  document.getElementById('success-name').textContent = formData.identificacao.nome + ' foi cadastrado(a) com sucesso na APABB.';
-  document.getElementById('success-screen').style.display = 'block';
+  document.getElementById('success-name').textContent = (formData.identificacao.nome || 'Colaborador') + ' foi cadastrado(a) com sucesso na APABB.';
+  // Garante que tela de sucesso aparece
+  const ss = document.getElementById('success-screen');
+  ss.style.display = 'block';
+  document.getElementById('form-wrapper').style.display = 'none';
   window.scrollTo({ top: 0, behavior: 'smooth' });
 }
 
@@ -2157,9 +2202,133 @@ function resetForm() {
   });
   document.querySelectorAll('.doc-filename').forEach(el => el.textContent = '');
 
+  // Limpa dependentes dinâmicos
+  const lista = document.getElementById('lista-dependentes');
+  if (lista) lista.innerHTML = '';
+  document.getElementById('dep_ir').value = '0';
+  document.getElementById('dep_sf').value = '0';
+
+  // Volta para tela inicial
+  document.getElementById('success-screen').style.display = 'none';
+  document.getElementById('form-wrapper').style.display = 'none';
+  document.getElementById('intro-screen').style.display = 'flex';
+
   completedSteps.clear();
   currentStep = 1;
-  go(1);
+  // Não chama go(1) pois form-wrapper está oculto — será chamado ao iniciar
+}
+
+/* ══════════════════════════════════════
+   TELA INICIAL
+══════════════════════════════════════ */
+function iniciarCadastro() {
+  document.getElementById('intro-screen').style.display = 'none';
+  document.getElementById('form-wrapper').style.display = 'block';
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+/* ══════════════════════════════════════
+   DEPENDENTES DINÂMICOS
+══════════════════════════════════════ */
+function atualizarDependentes() {
+  const qtdIR = parseInt(document.getElementById('dep_ir').value) || 0;
+  const qtdSF = parseInt(document.getElementById('dep_sf').value) || 0;
+  const total  = Math.max(qtdIR, qtdSF);
+  const lista  = document.getElementById('lista-dependentes');
+  if (!lista) return;
+
+  // Guarda arquivos já anexados
+  const prevDocs = {};
+  lista.querySelectorAll('.dep-doc-row').forEach(row => {
+    const id = row.dataset.docId;
+    if (uploadedDocs[id]) prevDocs[id] = uploadedDocs[id];
+  });
+
+  if (total === 0) { lista.innerHTML = ''; return; }
+
+  let html = '<div class="doc-section-title" style="margin-top:1rem">👨‍👩‍👧 Dados dos Dependentes</div>';
+  for (let i = 1; i <= total; i++) {
+    const tag = i <= qtdIR && i <= qtdSF ? 'IR + Sal. Família' : i <= qtdIR ? 'Imp. Renda' : 'Sal. Família';
+    const docId = `dep-doc-${i}`;
+    const isUp  = !!uploadedDocs[docId];
+    html += `
+    <div style="background:var(--cinza);border:1.5px solid var(--borda);border-radius:12px;padding:1rem 1.2rem;margin-bottom:0.8rem">
+      <div style="font-size:0.72rem;font-weight:800;text-transform:uppercase;letter-spacing:.06em;color:var(--azul);margin-bottom:0.8rem">
+        Dependente ${i} <span style="background:var(--azul-ll);color:var(--azul-m);border-radius:10px;padding:2px 8px;font-size:0.65rem;margin-left:6px">${tag}</span>
+      </div>
+      <div class="grid g2" style="margin-bottom:0.8rem">
+        <div class="field">
+          <label>Nome Completo <span class="req">*</span></label>
+          <input type="text" id="dep_nome_${i}" placeholder="Nome do dependente">
+        </div>
+        <div class="field">
+          <label>Data de Nascimento <span class="req">*</span></label>
+          <input type="date" id="dep_nasc_${i}">
+        </div>
+      </div>
+      <div class="grid g2" style="margin-bottom:0.8rem">
+        <div class="field">
+          <label>CPF do Dependente</label>
+          <input type="text" id="dep_cpf_${i}" placeholder="000.000.000-00" maxlength="14">
+        </div>
+        <div class="field">
+          <label>Grau de Parentesco <span class="req">*</span></label>
+          <select id="dep_parent_${i}">
+            <option value="">Selecione</option>
+            <option>Filho(a)</option><option>Cônjuge / Companheiro(a)</option>
+            <option>Pai / Mãe</option><option>Irmão / Irmã</option>
+            <option>Enteado(a)</option><option>Tutelado(a)</option><option>Outros</option>
+          </select>
+        </div>
+      </div>
+      <div class="dep-doc-row doc-row ${isUp ? 'uploaded' : ''}" data-doc-id="${docId}" style="margin-top:0.2rem">
+        <div class="doc-icon">📋</div>
+        <div class="doc-info">
+          <div class="doc-name">Documento do Dependente ${i}</div>
+          <div class="doc-meta">
+            <span class="doc-badge-req">Obrigatório</span>
+            <span class="doc-badge-ok">✓ Anexado</span>
+            <span style="color:var(--label)">Certidão de nascimento, casamento ou documento de identidade</span>
+          </div>
+          <div class="doc-filename" id="fn-${docId}">${isUp ? '📄 ' + uploadedDocs[docId].file.name : ''}</div>
+        </div>
+        <div class="doc-actions">
+          <label class="btn-doc-upload">📎 Anexar<input type="file" accept=".pdf,.jpg,.jpeg,.png" onchange="handleUpload(this,'${docId}','Dependente ${i}')"></label>
+          <button class="btn-doc-view" onclick="previewDoc('${docId}')">👁 Visualizar</button>
+          <button class="btn-doc-del" onclick="removeDoc('${docId}')" title="Remover">🗑</button>
+        </div>
+      </div>
+    </div>`;
+  }
+  lista.innerHTML = html;
+
+  // Restaura arquivos já anexados na UI
+  Object.keys(prevDocs).forEach(id => {
+    uploadedDocs[id] = prevDocs[id];
+    const row = lista.querySelector(`[data-doc-id="${id}"]`);
+    const fn  = document.getElementById('fn-' + id);
+    if (row) row.classList.add('uploaded');
+    if (fn)  fn.textContent = '📄 ' + prevDocs[id].file.name;
+  });
+}
+
+/* Coleta dados dos dependentes para export */
+function coletarDependentes() {
+  const qtdIR = parseInt(document.getElementById('dep_ir').value) || 0;
+  const qtdSF = parseInt(document.getElementById('dep_sf').value) || 0;
+  const total  = Math.max(qtdIR, qtdSF);
+  const deps   = [];
+  for (let i = 1; i <= total; i++) {
+    deps.push({
+      numero:      i,
+      nome:        (document.getElementById('dep_nome_' + i) || {}).value || '',
+      nascimento:  (document.getElementById('dep_nasc_' + i) || {}).value || '',
+      cpf:         (document.getElementById('dep_cpf_' + i) || {}).value || '',
+      parentesco:  (document.getElementById('dep_parent_' + i) || {}).value || '',
+      tipo:        i <= qtdIR && i <= qtdSF ? 'IR + Sal.Família' : i <= qtdIR ? 'Imp.Renda' : 'Sal.Família',
+    });
+  }
+  return deps;
 }
 
 /* ══════════════════════════════════════
@@ -2181,9 +2350,9 @@ function updateReservista() {
   }
 }
 
-/* Validação customizada da seção 5 (inclui reservista para homens) */
+/* Validação customizada da seção 5 (inclui reservista para homens e foto 3x4) */
 function goNextSec5() {
-  const required = ['ctps_num','rg','cpf','pis'];
+  const required = ['ctps_num','rg','cpf']; // PIS não é obrigatório
   let valid = true;
   for (const id of required) {
     const el = document.getElementById(id);
@@ -2197,12 +2366,22 @@ function goNextSec5() {
     if (!res || !res.value.trim()) { markInvalid(res); valid = false; }
     else markValid(res);
   }
+  // Foto 3x4: obrigatória
+  if (!uploadedDocs['foto3x4']) {
+    const fotoRow = document.getElementById('dr-foto3x4');
+    if (fotoRow) fotoRow.classList.add('required-missing');
+    showToast('⚠ A foto 3×4 é obrigatória.', 'error');
+    valid = false;
+  } else {
+    const fotoRow = document.getElementById('dr-foto3x4');
+    if (fotoRow) fotoRow.classList.remove('required-missing');
+  }
   if (!valid) {
     showToast('⚠ Preencha todos os campos obrigatórios antes de continuar.', 'error');
     const card = document.getElementById('sec5').querySelector('.card');
     card.classList.remove('shake'); void card.offsetWidth; card.classList.add('shake');
     setTimeout(() => card.classList.remove('shake'), 500);
-    const first = document.querySelector('#sec5 .invalid');
+    const first = document.querySelector('#sec5 .invalid, #sec5 .required-missing');
     if (first) first.scrollIntoView({ behavior:'smooth', block:'center' });
     return;
   }
