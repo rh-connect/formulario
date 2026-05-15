@@ -1,0 +1,458 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>APABB — Painel RH</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800&display=swap');
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{--azul:#1B3A8C;--azul-m:#2E5BB8;--verde:#1A7A4A;--verde-l:#E6F7EF;
+  --amarelo:#F5A800;--borda:#C5D3EE;--label:#4A6490;--texto:#1A2B4A;
+  --cinza:#F4F7FC;--branco:#fff;--erro:#C0392B}
+body{font-family:'Nunito',sans-serif;background:#EEF3FB;min-height:100vh;color:var(--texto)}
+.top-strip{background:var(--azul);height:5px}
+header{background:var(--branco);box-shadow:0 2px 12px rgba(27,58,140,.10);
+  padding:1rem 2rem;display:flex;align-items:center;gap:1rem;
+  position:sticky;top:0;z-index:100}
+header h1{font-size:1rem;font-weight:800;color:var(--azul)}
+header p{font-size:.75rem;color:var(--label);margin-top:1px}
+.badge{margin-left:auto;background:#FFF3CD;border:1px solid var(--amarelo);
+  border-radius:20px;padding:3px 12px;font-size:.7rem;font-weight:700;color:#856404}
+
+/* LOGIN */
+#login-screen{min-height:calc(100vh - 71px);display:flex;align-items:center;
+  justify-content:center;padding:2rem}
+.login-card{background:var(--branco);border-radius:16px;padding:2.5rem 2rem;
+  width:100%;max-width:380px;box-shadow:0 4px 24px rgba(27,58,140,.10);text-align:center}
+.login-card h2{font-size:1.2rem;font-weight:800;color:var(--azul);margin-bottom:.4rem}
+.login-card p{font-size:.85rem;color:var(--label);margin-bottom:1.5rem}
+.field{display:flex;flex-direction:column;gap:.28rem;margin-bottom:1rem;text-align:left}
+.field label{font-size:.68rem;font-weight:700;letter-spacing:.07em;
+  text-transform:uppercase;color:var(--label)}
+.field input{height:42px;padding:0 .9rem;border:1.5px solid var(--borda);border-radius:10px;
+  font-family:'Nunito',sans-serif;font-size:.88rem;color:var(--texto);
+  background:var(--cinza);outline:none;width:100%}
+.field input:focus{border-color:var(--azul-m);box-shadow:0 0 0 3px rgba(74,144,217,.15)}
+.btn-login{width:100%;padding:.75rem;background:var(--azul);color:#fff;border:none;
+  border-radius:10px;font-family:'Nunito',sans-serif;font-size:.9rem;
+  font-weight:800;cursor:pointer;transition:background .2s}
+.btn-login:hover{background:var(--azul-m)}
+.login-err{font-size:.8rem;color:var(--erro);margin-top:.5rem;display:none}
+
+/* PAINEL */
+#painel{display:none}
+.container{max-width:1100px;margin:0 auto;padding:1.5rem 1rem 4rem}
+.toolbar{display:flex;align-items:center;gap:1rem;margin-bottom:1.2rem;flex-wrap:wrap}
+.toolbar h2{font-size:1.1rem;font-weight:800;color:var(--azul);flex:1}
+.btn{padding:.6rem 1.3rem;border-radius:10px;font-family:'Nunito',sans-serif;
+  font-size:.84rem;font-weight:700;cursor:pointer;border:none;transition:all .2s;
+  display:inline-flex;align-items:center;gap:6px}
+.btn-primary{background:var(--azul);color:#fff}
+.btn-primary:hover{background:var(--azul-m)}
+.btn-green{background:#E8F5E9;border:2px solid #66BB6A;color:#1B5E20}
+.btn-green:hover{background:#C8E6C9}
+.btn-outline{background:var(--branco);border:1.5px solid var(--borda);color:var(--label)}
+.btn-outline:hover{border-color:var(--azul-m);color:var(--azul)}
+.search-box{padding:.5rem .9rem;border:1.5px solid var(--borda);border-radius:10px;
+  font-family:'Nunito',sans-serif;font-size:.85rem;width:260px;outline:none}
+.search-box:focus{border-color:var(--azul-m)}
+
+/* STATS */
+.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:.8rem;margin-bottom:1.2rem}
+.stat{background:var(--branco);border-radius:12px;padding:.9rem 1.1rem;
+  border:1px solid var(--borda)}
+.stat .sv{font-size:1.6rem;font-weight:800;color:var(--azul);line-height:1}
+.stat .sl{font-size:.7rem;font-weight:700;text-transform:uppercase;letter-spacing:.06em;
+  color:var(--label);margin-top:.25rem}
+
+/* TABLE */
+.table-wrap{background:var(--branco);border-radius:16px;overflow:hidden;
+  box-shadow:0 2px 16px rgba(27,58,140,.07)}
+table{width:100%;border-collapse:collapse;font-size:.82rem}
+th{background:var(--azul);color:#fff;padding:.7rem 1rem;
+  text-align:left;font-size:.68rem;font-weight:800;text-transform:uppercase;letter-spacing:.05em}
+td{padding:.7rem 1rem;border-bottom:1px solid var(--borda);vertical-align:middle}
+tr:last-child td{border-bottom:none}
+tr:hover td{background:#F8FAFE}
+.tag-vt-sim{background:#D1FAE5;color:#065F46;border-radius:6px;
+  padding:2px 8px;font-size:.67rem;font-weight:700}
+.tag-vt-nao{background:#F1EFE8;color:#5F5E5A;border-radius:6px;
+  padding:2px 8px;font-size:.67rem;font-weight:700}
+.btn-row{padding:.3rem .8rem;border-radius:8px;font-family:'Nunito',sans-serif;
+  font-size:.72rem;font-weight:700;cursor:pointer;border:1.5px solid var(--borda);
+  background:var(--branco);color:var(--azul);transition:all .2s}
+.btn-row:hover{border-color:var(--azul-m);background:var(--cinza)}
+
+/* MODAL DETALHE */
+#detail-modal{display:none;position:fixed;inset:0;background:rgba(10,18,40,.78);
+  z-index:9000;align-items:center;justify-content:center;padding:1rem;backdrop-filter:blur(4px)}
+#detail-modal.open{display:flex}
+.modal-box{background:var(--branco);border-radius:16px;overflow:hidden;
+  width:100%;max-width:700px;max-height:90vh;display:flex;flex-direction:column}
+.modal-hd{background:linear-gradient(135deg,var(--azul),var(--azul-m));
+  padding:.9rem 1.3rem;display:flex;align-items:center;gap:.7rem;flex-shrink:0}
+.modal-title{color:#fff;font-weight:800;font-size:.9rem;flex:1}
+.modal-close{background:rgba(255,255,255,.15);border:none;border-radius:8px;
+  color:#fff;width:30px;height:30px;cursor:pointer;display:flex;align-items:center;
+  justify-content:center;font-size:.95rem}
+.modal-body{flex:1;overflow:auto;padding:1.4rem}
+.detail-grid{display:grid;grid-template-columns:1fr 1fr;gap:.6rem}
+.detail-item{background:var(--cinza);border-radius:8px;padding:.6rem .8rem;
+  border:1px solid var(--borda)}
+.detail-item .dl{font-size:.65rem;font-weight:700;text-transform:uppercase;
+  letter-spacing:.06em;color:var(--label)}
+.detail-item .dv{font-size:.85rem;color:var(--texto);margin-top:.1rem;font-weight:600}
+.sec-hd{font-size:.7rem;font-weight:800;text-transform:uppercase;letter-spacing:.07em;
+  color:var(--label);margin:1rem 0 .5rem;display:flex;align-items:center;gap:.5rem}
+.sec-hd::after{content:'';flex:1;height:1px;background:var(--borda)}
+.modal-actions{display:flex;gap:.7rem;padding:1rem 1.4rem;
+  border-top:1px solid var(--borda);background:var(--cinza);flex-shrink:0}
+
+/* LOADING / EMPTY -->
+.state-msg{text-align:center;padding:4rem 2rem;color:var(--label)}
+.state-msg .icon{font-size:2.5rem;margin-bottom:.8rem}
+.state-msg p{font-size:.9rem}
+
+@media(max-width:700px){
+  .stats{grid-template-columns:1fr 1fr}
+  .search-box{width:100%}
+  table{display:block;overflow-x:auto}
+  .detail-grid{grid-template-columns:1fr}
+}
+</style>
+</head>
+<body>
+<div class="top-strip"></div>
+<header>
+  <div>
+    <h1>Painel RH — APABB</h1>
+    <p>Cadastros de novos colaboradores</p>
+  </div>
+  <div class="badge" id="user-badge" style="display:none"></div>
+</header>
+
+<!-- LOGIN -->
+<div id="login-screen">
+  <div class="login-card">
+    <div style="font-size:2rem;margin-bottom:.8rem">🔐</div>
+    <h2>Acesso Restrito</h2>
+    <p>Área exclusiva do Departamento de RH</p>
+    <div class="field">
+      <label>Usuário</label>
+      <input type="text" id="login-user" placeholder="rh@apabb.org.br" autocomplete="username">
+    </div>
+    <div class="field">
+      <label>Senha</label>
+      <input type="password" id="login-pass" placeholder="••••••••" autocomplete="current-password">
+    </div>
+    <button class="btn-login" onclick="fazerLogin()">Entrar →</button>
+    <div class="login-err" id="login-err">Usuário ou senha incorretos.</div>
+  </div>
+</div>
+
+<!-- PAINEL -->
+<div id="painel">
+  <div class="container">
+
+    <div class="toolbar">
+      <h2 id="painel-titulo">Cadastros</h2>
+      <input class="search-box" type="text" placeholder="🔍  Buscar por nome, CPF ou cargo..." oninput="filtrar(this.value)" id="busca">
+      <button class="btn btn-outline" onclick="carregarDados()">↻ Atualizar</button>
+      <button class="btn btn-green" onclick="exportarTodos()">📊 Exportar tudo (Excel)</button>
+      <button class="btn btn-outline" onclick="sair()">Sair</button>
+    </div>
+
+    <div class="stats">
+      <div class="stat"><div class="sv" id="st-total">—</div><div class="sl">Total de cadastros</div></div>
+      <div class="stat"><div class="sv" id="st-mes">—</div><div class="sl">Este mês</div></div>
+      <div class="stat"><div class="sv" id="st-vt">—</div><div class="sl">Solicitaram VT</div></div>
+      <div class="stat"><div class="sv" id="st-hoje">—</div><div class="sl">Hoje</div></div>
+    </div>
+
+    <div class="table-wrap">
+      <div id="table-area">
+        <div class="state-msg"><div class="icon">⏳</div><p>Carregando cadastros...</p></div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- MODAL DETALHE -->
+<div id="detail-modal">
+  <div class="modal-box">
+    <div class="modal-hd">
+      <span class="modal-title" id="modal-title">Detalhes do Cadastro</span>
+      <button class="modal-close" onclick="fecharModal()">✕</button>
+    </div>
+    <div class="modal-body" id="modal-body"></div>
+    <div class="modal-actions">
+      <button class="btn btn-green" onclick="exportarIndividual()">📊 Baixar Excel</button>
+      <button class="btn btn-outline" onclick="fecharModal()">Fechar</button>
+    </div>
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/xlsx/dist/xlsx.full.min.js"></script>
+<script>
+/* ════════════════════════════════════
+   CONFIGURAÇÃO — preencha antes de usar
+════════════════════════════════════ */
+const CONFIG = {
+  // URL da planilha publicada como JSON (veja instruções abaixo)
+  sheetsJsonUrl: '',
+
+  // Credenciais simples de acesso ao painel
+  // Para adicionar usuários, basta incluir mais objetos no array
+  usuarios: [
+    { user: 'rhumanos@apabb.org.br', senha: 'apabb@2026', nome: 'RH — APABB' },
+    { user: 'admin',                  senha: 'admin123',   nome: 'Administrador' },
+  ],
+};
+
+/* ════════════════════════════════════
+   ESTADO
+════════════════════════════════════ */
+let todosOsDados = [];
+let dadosFiltrados = [];
+let detalheAtual = null;
+
+/* ════════════════════════════════════
+   LOGIN
+════════════════════════════════════ */
+function fazerLogin() {
+  const u = document.getElementById('login-user').value.trim();
+  const p = document.getElementById('login-pass').value;
+  const match = CONFIG.usuarios.find(x => x.user === u && x.senha === p);
+  if (!match) {
+    document.getElementById('login-err').style.display = 'block';
+    return;
+  }
+  sessionStorage.setItem('rh-logado', match.nome);
+  document.getElementById('login-screen').style.display = 'none';
+  document.getElementById('painel').style.display = 'block';
+  document.getElementById('user-badge').textContent = '👤 ' + match.nome;
+  document.getElementById('user-badge').style.display = '';
+  carregarDados();
+}
+
+function sair() {
+  sessionStorage.removeItem('rh-logado');
+  location.reload();
+}
+
+document.getElementById('login-pass').addEventListener('keydown', e => { if(e.key==='Enter') fazerLogin(); });
+
+// Auto-login se já estava logado na sessão
+if (sessionStorage.getItem('rh-logado')) {
+  document.getElementById('login-screen').style.display = 'none';
+  document.getElementById('painel').style.display = 'block';
+  document.getElementById('user-badge').textContent = '👤 ' + sessionStorage.getItem('rh-logado');
+  document.getElementById('user-badge').style.display = '';
+  setTimeout(carregarDados, 100);
+}
+
+/* ════════════════════════════════════
+   CARREGAR DADOS DO GOOGLE SHEETS
+════════════════════════════════════ */
+async function carregarDados() {
+  document.getElementById('table-area').innerHTML =
+    '<div class="state-msg"><div class="icon">⏳</div><p>Carregando cadastros...</p></div>';
+
+  if (!CONFIG.sheetsJsonUrl) {
+    // Modo demo — dados de exemplo
+    todosOsDados = gerarDemoData();
+    renderizarTudo();
+    return;
+  }
+
+  try {
+    const res  = await fetch(CONFIG.sheetsJsonUrl);
+    const json = await res.json();
+    // Google Sheets JSON: json.values[0] = cabeçalhos, json.values[1..] = dados
+    const [headers, ...rows] = json.values;
+    todosOsDados = rows.map(row => {
+      const obj = {};
+      headers.forEach((h, i) => obj[h] = row[i] || '');
+      return obj;
+    });
+    renderizarTudo();
+  } catch(e) {
+    document.getElementById('table-area').innerHTML =
+      `<div class="state-msg"><div class="icon">⚠️</div><p>Erro ao carregar: ${e.message}<br>Verifique a URL do Sheets no CONFIG.</p></div>`;
+  }
+}
+
+/* ════════════════════════════════════
+   RENDERIZAR
+════════════════════════════════════ */
+function renderizarTudo() {
+  dadosFiltrados = [...todosOsDados];
+  atualizarStats();
+  renderizarTabela();
+}
+
+function atualizarStats() {
+  const hoje = new Date().toISOString().slice(0,10);
+  const mes  = new Date().toISOString().slice(0,7);
+  document.getElementById('st-total').textContent = todosOsDados.length;
+  document.getElementById('st-hoje').textContent  = todosOsDados.filter(r => (r.data_envio||'').startsWith(hoje)).length;
+  document.getElementById('st-mes').textContent   = todosOsDados.filter(r => (r.data_envio||'').startsWith(mes)).length;
+  document.getElementById('st-vt').textContent    = todosOsDados.filter(r => r.recebe_vt === 'Sim').length;
+  document.getElementById('painel-titulo').textContent =
+    `Cadastros (${todosOsDados.length})`;
+}
+
+function renderizarTabela() {
+  const area = document.getElementById('table-area');
+  if (!dadosFiltrados.length) {
+    area.innerHTML = '<div class="state-msg"><div class="icon">📋</div><p>Nenhum cadastro encontrado.</p></div>';
+    return;
+  }
+  const rows = dadosFiltrados.map((r,i) => `
+    <tr>
+      <td><strong>${r.nome||'—'}</strong></td>
+      <td>${r.cpf||'—'}</td>
+      <td>${r.cargo||'—'}</td>
+      <td>${r.admissao||'—'}</td>
+      <td>${r.salario ? 'R$ '+r.salario : '—'}</td>
+      <td><span class="${r.recebe_vt==='Sim'?'tag-vt-sim':'tag-vt-nao'}">${r.recebe_vt||'—'}</span></td>
+      <td>${(r.data_envio||'').slice(0,10)||'—'}</td>
+      <td><button class="btn-row" onclick="abrirDetalhe(${i})">Ver detalhes</button></td>
+    </tr>`).join('');
+
+  area.innerHTML = `<table>
+    <thead><tr>
+      <th>Nome</th><th>CPF</th><th>Cargo</th>
+      <th>Admissão</th><th>Salário</th><th>VT</th>
+      <th>Enviado em</th><th></th>
+    </tr></thead>
+    <tbody>${rows}</tbody>
+  </table>`;
+}
+
+function filtrar(termo) {
+  const t = termo.toLowerCase();
+  dadosFiltrados = todosOsDados.filter(r =>
+    (r.nome||'').toLowerCase().includes(t) ||
+    (r.cpf||'').includes(t) ||
+    (r.cargo||'').toLowerCase().includes(t) ||
+    (r.email||'').toLowerCase().includes(t)
+  );
+  renderizarTabela();
+}
+
+/* ════════════════════════════════════
+   DETALHE
+════════════════════════════════════ */
+function abrirDetalhe(idx) {
+  detalheAtual = dadosFiltrados[idx];
+  const d = detalheAtual;
+  document.getElementById('modal-title').textContent = d.nome || 'Cadastro';
+
+  const di = (l,v) => v ? `<div class="detail-item"><div class="dl">${l}</div><div class="dv">${v}</div></div>` : '';
+  const sh = t => `<div class="sec-hd">${t}</div>`;
+
+  document.getElementById('modal-body').innerHTML = `
+    ${sh('👤 Identificação')}
+    <div class="detail-grid">
+      ${di('Nome',d.nome)}${di('CPF',d.cpf)}${di('RG',d.rg)}
+      ${di('Data Nasc.',d.data_nasc)}${di('Sexo',d.sexo)}${di('Estado Civil',d.estado_civil)}
+      ${di('Tipo Sanguíneo',d.tipo_sang)}${di('Mãe',d.mae)}${di('Pai',d.pai)}
+    </div>
+    ${sh('🏠 Endereço')}
+    <div class="detail-grid">
+      ${di('Logradouro',d.logradouro)}${di('Bairro',d.bairro)}
+      ${di('Cidade / UF',d.cidade)}${di('CEP',d.cep)}
+      ${di('Celular',d.celular)}${di('E-mail',d.email)}
+    </div>
+    ${sh('💼 Cargo')}
+    <div class="detail-grid">
+      ${di('Cargo',d.cargo)}${di('Admissão',d.admissao)}
+      ${di('Salário',d.salario ? 'R$ '+d.salario : '')}${di('Horário',d.horario)}
+    </div>
+    ${sh('📄 Documentos')}
+    <div class="detail-grid">
+      ${di('PIS',d.pis)}${di('CTPS Nº',d.ctps_num)}
+      ${di('Título Eleitor',d.titulo)}${di('Reservista',d.reservista)}
+    </div>
+    ${sh('🏦 Dados Bancários')}
+    <div class="detail-grid">
+      ${di('Banco',d.banco)}${di('Agência',d.agencia)}${di('Conta',d.conta)}
+    </div>
+    ${sh('🚌 Vale Transporte')}
+    <div class="detail-grid">
+      ${di('Recebe VT',d.recebe_vt)}${di('Valor Diário',d.vt_valor ? 'R$ '+d.vt_valor : '')}
+      ${di('Seguro Desemprego',d.recebe_sd)}
+    </div>
+    ${d.dependentes ? sh('👨‍👩‍👧 Dependentes')+'<div class="detail-grid">'+di('Qtd. IR',d.dep_ir)+di('Qtd. SF',d.dep_sf)+di('Lista',d.dependentes)+'</div>' : ''}
+    ${sh('📎 Documentos Anexados')}
+    <div class="detail-grid">${di('Qtd. arquivos',d.docs_anexados)}${di('Arquivos',d.lista_docs)}</div>
+    ${sh('ℹ️ Meta')}
+    <div class="detail-grid">${di('Enviado em',d.data_envio)}${di('Responsável',d.responsavel)}</div>
+  `;
+
+  document.getElementById('detail-modal').classList.add('open');
+  document.body.style.overflow = 'hidden';
+}
+
+function fecharModal() {
+  document.getElementById('detail-modal').classList.remove('open');
+  document.body.style.overflow = '';
+}
+document.getElementById('detail-modal').addEventListener('click', e => { if(e.target===e.currentTarget) fecharModal(); });
+document.addEventListener('keydown', e => { if(e.key==='Escape') fecharModal(); });
+
+/* ════════════════════════════════════
+   EXPORTAR EXCEL
+════════════════════════════════════ */
+function exportarTodos() {
+  if (!dadosFiltrados.length) { alert('Nenhum dado para exportar.'); return; }
+  const wb = XLSX.utils.book_new();
+  const ws = XLSX.utils.json_to_sheet(dadosFiltrados);
+  ws['!cols'] = Object.keys(dadosFiltrados[0]).map(() => ({wch:22}));
+  XLSX.utils.book_append_sheet(wb, ws, 'Cadastros');
+  XLSX.writeFile(wb, `apabb_cadastros_${new Date().toISOString().slice(0,10)}.xlsx`);
+}
+
+function exportarIndividual() {
+  if (!detalheAtual) return;
+  const nome = (detalheAtual.nome||'colaborador').replace(/\s+/g,'_').toLowerCase();
+  const wb = XLSX.utils.book_new();
+  const rows = Object.entries(detalheAtual).map(([k,v]) => [k, v]);
+  const ws = XLSX.utils.aoa_to_sheet([['Campo','Valor'], ...rows]);
+  ws['!cols'] = [{wch:26},{wch:44}];
+  XLSX.utils.book_append_sheet(wb, ws, 'Cadastro');
+  XLSX.writeFile(wb, `cadastro_${nome}.xlsx`);
+}
+
+/* ════════════════════════════════════
+   DADOS DEMO (quando sheetsJsonUrl vazio)
+════════════════════════════════════ */
+function gerarDemoData() {
+  return [
+    { data_envio: new Date().toISOString(), nome:'João da Silva', cpf:'123.456.789-00',
+      rg:'12.345.678-9', cargo:'Analista Administrativo', admissao:'2026-05-15',
+      salario:'3.500,00', recebe_vt:'Sim', vt_valor:'9,70', recebe_sd:'Não',
+      email:'joao@email.com', celular:'(11) 99999-0000',
+      cidade:'São Paulo / SP', bairro:'Centro', cep:'01310-100',
+      banco:'Banco do Brasil (001)', agencia:'1234-5', conta:'12345-6',
+      pis:'123.45678.90-1', ctps_num:'12345', docs_anexados:'6',
+      lista_docs:'CTPS Digital: ctps.pdf, RG Frente: rg.jpg',
+      responsavel:'Ana Paula', dep_ir:'1', dep_sf:'0',
+      dependentes:'Maria Silva | 2018-03-10 | Filha' },
+    { data_envio: new Date(Date.now()-86400000).toISOString(), nome:'Maria Souza',
+      cpf:'987.654.321-00', rg:'98.765.432-1', cargo:'Assistente de RH',
+      admissao:'2026-05-20', salario:'2.800,00', recebe_vt:'Não', recebe_sd:'Não',
+      email:'maria@email.com', celular:'(11) 88888-0000',
+      cidade:'São Paulo / SP', bairro:'Pinheiros', cep:'05422-000',
+      banco:'Itaú Unibanco (341)', agencia:'5678-9', conta:'98765-4',
+      pis:'987.65432.10-9', ctps_num:'98765', docs_anexados:'5',
+      lista_docs:'CTPS Digital: ctps.pdf, RG Frente: rg.jpg',
+      responsavel:'Carlos', dep_ir:'0', dep_sf:'0', dependentes:'' },
+  ];
+}
+</script>
+</body>
+</html>
